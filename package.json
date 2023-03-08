@@ -14,7 +14,10 @@
     "postinstall": "cd frontend && npm install && cd .. && cd integration-tests && npm install && cd .. && cd contract && npm install"
   },
   "devDependencies": {
-    "near-cli": "^3.3.0"
+    "@types/node": "^18.14.6",
+    "near-cli": "^1.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "near-api-js": "^1.1.0"
+  }
 }
