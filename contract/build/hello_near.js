@@ -497,6 +497,12 @@ function attachedDeposit() {
   return env.attached_deposit();
 }
 /**
+ * Returns the current account's account balance.
+ */
+function accountBalance() {
+  return env.account_balance();
+}
+/**
  * Reads the value from NEAR storage that is stored under the provided key.
  *
  * @param key - The key to read from storage.
@@ -1116,11 +1122,12 @@ function NearBindgen({
   };
 }
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _class, _class2;
-let CreditContract = (_dec = NearBindgen({}), _dec2 = initialize(), _dec3 = view(), _dec4 = view(), _dec5 = view(), _dec6 = call({}), _dec(_class = (_class2 = class CreditContract {
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _class, _class2;
+let CreditContract = (_dec = NearBindgen({}), _dec2 = initialize(), _dec3 = view(), _dec4 = view(), _dec5 = view(), _dec6 = call({}), _dec7 = call({}), _dec(_class = (_class2 = class CreditContract {
   users = new UnorderedMap('map-uid-1');
   activities = new UnorderedMap('map-uid-1');
   credits = new UnorderedMap('map-uid-1');
+  balance = BigInt(0);
   account = "udg.testnet";
   init({
     account
@@ -1146,8 +1153,9 @@ let CreditContract = (_dec = NearBindgen({}), _dec2 = initialize(), _dec3 = view
   }
   // This method is read-only and can be called for free
   get_balance() {
-    // This method give us an example command to use a call method
-    return "";
+    // This method give us the balance of our near wallet
+    this.balance = accountBalance();
+    return BigInt(this.balance);
   }
   set_user({
     account_id,
@@ -1177,19 +1185,32 @@ let CreditContract = (_dec = NearBindgen({}), _dec2 = initialize(), _dec3 = view
     };
     this.users.set(account_id, information);
   }
-
-  // @call({})
-  // set_activities({account_id, total_amount}:{account_id: string, total_amount: bigint}): void{
-
-  //   let information: Activities = {
-  //     account_id: account_id,
-  //     total_amount: total_amount
-  //   };
-  //   this.activities.set(account_id, information);
-  //   const amount = total_amount * BigInt(0.20);
-  //   let 
-  // }
-}, (_applyDecoratedDescriptor(_class2.prototype, "init", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "init"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_example", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "get_example"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_example_method", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "get_example_method"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_balance", [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "get_balance"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "set_user", [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, "set_user"), _class2.prototype)), _class2)) || _class);
+  set_activities({
+    account_id,
+    total_amount
+  }) {
+    let information = {
+      account_id: account_id,
+      total_amount: total_amount
+    };
+    this.activities.set(account_id, information);
+    this.balance = total_amount * BigInt(0.022);
+  }
+}, (_applyDecoratedDescriptor(_class2.prototype, "init", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "init"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_example", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "get_example"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_example_method", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "get_example_method"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "get_balance", [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "get_balance"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "set_user", [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, "set_user"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "set_activities", [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, "set_activities"), _class2.prototype)), _class2)) || _class);
+function set_activities() {
+  const _state = CreditContract._getState();
+  if (!_state && CreditContract._requireInit()) {
+    throw new Error("Contract must be initialized");
+  }
+  const _contract = CreditContract._create();
+  if (_state) {
+    CreditContract._reconstruct(_contract, _state);
+  }
+  const _args = CreditContract._getArgs();
+  const _result = _contract.set_activities(_args);
+  CreditContract._saveToStorage(_contract);
+  if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(CreditContract._serialize(_result, true));
+}
 function set_user() {
   const _state = CreditContract._getState();
   if (!_state && CreditContract._requireInit()) {
@@ -1255,5 +1276,5 @@ function init() {
   if (_result !== undefined) if (_result && _result.constructor && _result.constructor.name === "NearPromise") _result.onReturn();else env.value_return(CreditContract._serialize(_result, true));
 }
 
-export { get_balance, get_example, get_example_method, init, set_user };
+export { get_balance, get_example, get_example_method, init, set_activities, set_user };
 //# sourceMappingURL=hello_near.js.map
